@@ -36,15 +36,11 @@ class OpenGraphParser
         $html = $this->convertHtmlToUtf8($html);
 
         $domDocument = new DOMDocument();
-        @$domDocument->loadHTML($html);
+        @$domDocument->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . $html);
 
-        $xPath = new DOMXPath($domDocument);
-        $query = '//*/meta[starts-with(@property, \'og:\')]';
-        $metaList = $xPath->query($query);
+        $metaList = $this->extractOpenGraphTags($domDocument);
 
-        $openGraphTags = [];
-
-        if ($metaList->length === 0) {
+        if (count($metaList) === 0) {
             $urlList = $this->extractUrlListFromDocument($domDocument);
             $parsedUrl = parse_url($url);
             $domain = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
@@ -54,23 +50,15 @@ class OpenGraphParser
                     $extractedUrl = $domain . $extractedUrl;
                 }
 
-                $openGraphTags = $this->getOpenGraphTags($extractedUrl, ++ $callCounter);
+                $metaList = $this->getOpenGraphTags($extractedUrl, ++ $callCounter);
 
-                if (count($openGraphTags) > 0) {
+                if (count($metaList) > 0) {
                     break;
                 }
             }
-        } else {
-            foreach ($metaList as $meta) {
-                /** @var DOMElement $meta */
-                $property = $meta->getAttribute('property');
-                $content = $meta->getAttribute('content');
-
-                $openGraphTags[$property] = $content;
-            }
         }
 
-        return $openGraphTags;
+        return $metaList;
     }
 
     /**
@@ -122,5 +110,22 @@ class OpenGraphParser
         }
 
         return $urlList;
+    }
+
+    private function extractOpenGraphTags(DOMDocument $domDocument)
+    {
+        $metaList = [];
+
+        foreach ($domDocument->getElementsByTagName('meta') as $meta) {
+            /** @var DOMElement $meta */
+            $property = $meta->getAttribute('property');
+            $content = $meta->getAttribute('content');
+
+            if (strpos($property, 'og:') === 0) {
+                $metaList[$property] = $content;
+            }
+        }
+
+        return $metaList;
     }
 }

@@ -7,5 +7,6 @@ class UnitTest extends \PHPUnit\Framework\TestCase
     {
         $openGraphParser = new \Visualplus\OpenGraph\OpenGraphParser();
 
+        $this->assertTrue(true);
     }
 }
