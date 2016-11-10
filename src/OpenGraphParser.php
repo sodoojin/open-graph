@@ -2,10 +2,8 @@
 
 namespace Visualplus\OpenGraph;
 
-
 use DOMDocument;
 use DOMElement;
-use DOMXPath;
 
 class OpenGraphParser
 {
@@ -89,7 +87,7 @@ class OpenGraphParser
         $domDocument->getElementsByTagName('html');
         $urlList = [];
         $frames = $domDocument->getElementsByTagName('frame');
-        $iframes = $domDocument->getElementsByTagName('iframe');
+        $iFrames = $domDocument->getElementsByTagName('iframe');
 
         foreach ($frames as $frame) {
             /** @var DOMElement $frame */
@@ -100,9 +98,9 @@ class OpenGraphParser
             }
         }
 
-        foreach ($iframes as $iframe) {
-            /** @var DOMElement $iframe */
-            $src = $iframe->getAttribute('src');
+        foreach ($iFrames as $iFrame) {
+            /** @var DOMElement $iFrame */
+            $src = $iFrame->getAttribute('src');
 
             if ($src) {
                 $urlList[] = $src;
@@ -112,6 +110,10 @@ class OpenGraphParser
         return $urlList;
     }
 
+    /**
+     * @param DOMDocument $domDocument
+     * @return array
+     */
     private function extractOpenGraphTags(DOMDocument $domDocument)
     {
         $metaList = [];
