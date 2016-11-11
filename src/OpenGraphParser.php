@@ -44,6 +44,8 @@ class OpenGraphParser
             $domain = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
 
             foreach ($urlList as $extractedUrl) {
+                if (strpos($extractedUrl, '//') === 0) continue;
+
                 if (strpos($extractedUrl, 'http') !== 0) {
                     $extractedUrl = $domain . $extractedUrl;
                 }
