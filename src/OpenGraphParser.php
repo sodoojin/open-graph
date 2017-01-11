@@ -67,7 +67,7 @@ class OpenGraphParser
      */
     private function convertHtmlToUtf8($html)
     {
-        $encoding = mb_detect_encoding($html, 'euc-kr, ms949, cp949, utf-8');
+        $encoding = mb_detect_encoding($html, mb_detect_order(), true);
 
         if ($encoding != '' && strtolower($encoding) != 'utf-8') {
             if (strtolower($encoding) !== 'utf-8') {
